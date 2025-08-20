@@ -40,14 +40,7 @@ Delete a torrent from downloads.
 
 ## Environment Variables
 
-Create a `.env` file with the following variables:
-
-```env
-APP_PORT=3000
-VOLUME_HOST_DOWNLOAD_PATH=/path/to/host/downloads
-VOLUME_CONTAINER_DOWNLOAD_PATH=/app/downloads
-NODE_ENV=development
-```
+Create a `.env` like `.env.example`:
 
 ## Docker Setup
 
