@@ -38,10 +38,6 @@ Add a new torrent to downloads.
 Delete a torrent from downloads.
 - **Body**: `DeleteTorrentDownloadCommand` with `MagnetUrl` field
 
-## Environment Variables
-
-Create a `.env` like `.env.example`:
-
 ## Docker Setup
 
 ### Prerequisites
