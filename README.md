@@ -1,54 +1,132 @@
-# Simple HTTP Client
+# Simple Torrent Client
 
-A Node.js backend service built with Express that provides HTTP client functionality. This project includes CORS support, Swagger API documentation, and IP checking middleware.
+A containerized torrent client application built with Node.js, TypeScript, and Express that provides REST API endpoints for managing torrent downloads.
 
 ## Features
 
-- RESTful API for making HTTP requests
-- Swagger UI API documentation at `/api-docs`
-- IP validation middleware
-- Cross-Origin Resource Sharing (CORS) support
-- Containerized with Docker
-- Puppeteer support for browser automation
+- **REST API**: Add, retrieve, and delete torrent downloads via HTTP endpoints
+- **Magnet URL Support**: Automatically extracts magnet URLs from torrent pages
+- **Docker Support**: Fully containerized with Docker networking
+- **Environment Configuration**: Configurable via environment variables
+- **Swagger Documentation**: Auto-generated API documentation
+- **Volume Mounting**: Persistent download storage
 
-## Build Instructions
+## Project Structure
 
-All configuration is centralized in the `.env` file. Use the provided script to automatically build and run with correct paths and Docker network:
+```
+src/
+├── features/
+│   └── torrent-client/
+│       ├── routes/TorrentClientRoutes.ts
+│       ├── services/TorrentDownloadsService.ts
+│       ├── commands/
+│       └── responses/
+├── container/
+└── ...
+```
 
+## API Endpoints
+
+### GET /api/torrent-client
+Retrieve a list of active torrent downloads.
+
+### POST /api/torrent-client
+Add a new torrent to downloads.
+- **Body**: `AddTorrentDownloadCommand` with `PageUrl` field
+
+### DELETE /api/torrent-client
+Delete a torrent from downloads.
+- **Body**: `DeleteTorrentDownloadCommand` with `MagnetUrl` field
+
+## Environment Variables
+
+Create a `.env` file with the following variables:
+
+```env
+APP_PORT=3000
+VOLUME_HOST_DOWNLOAD_PATH=/path/to/host/downloads
+VOLUME_CONTAINER_DOWNLOAD_PATH=/app/downloads
+NODE_ENV=development
+```
+
+## Docker Setup
+
+### Prerequisites
+- Docker and Docker Network support
+- The application communicates with another service on port 4445
+
+### Running the Application
+
+1. **Clone the repository**
 ```bash
-# Make script executable
+git clone <repository-url>
+cd simple-torrent-client
+```
+
+2. **Configure environment**
+```bash
+cp .env.example .env
+# Edit .env with your configuration
+```
+
+3. **Run with Docker**
+```bash
 chmod +x docker-run.sh
-
-# Build and run with .env configuration and Docker network
 ./docker-run.sh
-
-# Or manually build and run with Docker network
-docker build -t simple-torrent-client:latest .
-docker network create simple-torrent-net || true
-docker run --network simple-torrent-net -p 4446:4446 -v /media/Babylon/.TorrentApi-Dev:/app/media simple-torrent-client:latest
 ```
 
-## Docker Network for Inter-Container Communication
+The script will:
+- Parse environment variables from `.env`
+- Create a Docker network (`simple-net`)
+- Build the Docker image
+- Stop any existing containers
+- Run the new container with proper networking and volume mounting
 
-This project uses a Docker network (`simple-torrent-net`) to allow communication between containers.  
-If you run another container (e.g., an API your app needs to call), run it with the same network:
+### Docker Network
+
+The application uses a custom Docker network (`simple-net`) to communicate with other containerized services. Make sure any dependent services (like the one on port 4445) are also connected to this network:
 
 ```bash
-docker run --network simple-torrent-net --name other-api ...other-api-image...
+docker run -d --name other-api --network simple-net -p 4445:4445 your-other-image:latest
 ```
-
-Then, use `other-api` as the hostname in your configuration or `.env` file for inter-container requests.
-
-## Volumes Management
-
-The application uses paths configured in `.env` file automatically via the docker-run.sh script.
 
 ## Development
 
+### Local Development
 ```bash
-# Install dependencies
 npm install
-
-# Start development server
 npm run dev
 ```
+
+### Building
+```bash
+npm run build
+```
+
+### Testing
+```bash
+npm test
+```
+
+## Error Handling
+
+The application provides comprehensive error responses including:
+- Error message and type
+- Stack traces (in development)
+- Request details (URL, method, headers)
+- Timestamp and environment information
+
+## Dependencies
+
+- **Express**: Web framework
+- **TypeScript**: Type safety
+- **TSyringe**: Dependency injection
+- **Swagger**: API documentation
+
+## License
+
+[License information]
+
+## Contributing
+
+[Contributing guidelines]
